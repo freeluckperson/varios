@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
 import {
   Moon,
   Sun,
@@ -16,35 +17,37 @@ import { Typewriter } from "react-simple-typewriter";
 import { FaReact, FaNodeJs, FaJs, FaDatabase, FaJava } from "react-icons/fa";
 import { SiNextdotjs, SiAngular, SiSpringboot, SiJest } from "react-icons/si";
 
-const navItems = [
-  { id: 1, name: "About", link: "about" },
-  { id: 2, name: "Skills", link: "skills" },
-  { id: 3, name: "Projects", link: "projects" },
-  { id: 4, name: "Testimonials", link: "testimonials" },
+const elementosNavegacion = [
+  { id: 1, name: "Sobre Mí", link: "about" },
+  { id: 2, name: "Habilidades", link: "skills" },
+  { id: 3, name: "Proyectos", link: "projects" },
+  { id: 4, name: "Testimonios", link: "testimonials" },
   { id: 5, name: "Blog", link: "blog" },
-  { id: 6, name: "Contact", link: "contact" },
+  { id: 6, name: "Contacto", link: "contact" },
 ];
 
-const projects = [
+const proyectos = [
   {
     id: 1,
-    title: "E-commerce Platform",
-    description: "A full-stack e-commerce solution with React and Node.js",
+    title: "Plataforma E-commerce",
+    description:
+      "Una solución completa de comercio electrónico con React y Node.js",
   },
   {
     id: 2,
-    title: "AI Chatbot",
+    title: "Chatbot de IA",
     description:
-      "An intelligent chatbot powered by machine learning algorithms",
+      "Un chatbot inteligente impulsado por algoritmos de aprendizaje automático",
   },
   {
     id: 3,
-    title: "Mobile Fitness App",
-    description: "A React Native app for tracking workouts and nutrition",
+    title: "App de Fitness Móvil",
+    description:
+      "Una app de React Native para rastrear entrenamientos y nutrición",
   },
 ];
 
-const skills = [
+const habilidades = [
   { name: "React", icon: <FaReact className="text-blue-500 text-5xl" /> },
   { name: "Next.js", icon: <SiNextdotjs className="text-gray-900 text-5xl" /> },
   { name: "AngularJS", icon: <SiAngular className="text-red-500 text-5xl" /> },
@@ -63,69 +66,72 @@ const skills = [
   { name: "Jest", icon: <SiJest className="text-red-500 text-5xl" /> },
 ];
 
-const testimonials = [
+const testimonios = [
   {
     id: 1,
     name: "John Doe",
     role: "CEO, Tech Inc.",
-    text: "An exceptional developer who consistently delivers high-quality work.",
+    text: "Un desarrollador excepcional que siempre entrega trabajo de alta calidad.",
   },
   {
     id: 2,
     name: "Jane Smith",
-    role: "Project Manager, Digital Solutions",
-    text: "Highly skilled and a pleasure to work with. Always goes above and beyond.",
+    role: "Gerente de Proyecto, Soluciones Digitales",
+    text: "Muy hábil y un placer trabajar con él. Siempre va más allá.",
   },
   {
     id: 3,
     name: "Mike Johnson",
     role: "CTO, Innovate Co.",
-    text: "Impressive problem-solving skills and attention to detail. A valuable asset to any team.",
+    text: "Habilidades impresionantes para resolver problemas y atención al detalle. Un valioso activo para cualquier equipo.",
   },
 ];
 
-const blogPosts = [
+const postsBlog = [
   {
     id: 1,
-    title: "The Future of Web Development",
-    excerpt: "Exploring upcoming trends and technologies in web development...",
+    title: "El Futuro del Desarrollo Web",
+    excerpt:
+      "Explorando las tendencias y tecnologías futuras en el desarrollo web...",
   },
   {
     id: 2,
-    title: "Mastering React Hooks",
+    title: "Dominando los Hooks en React",
     excerpt:
-      "A comprehensive guide to using React Hooks effectively in your projects...",
+      "Una guía completa para usar los Hooks de React de manera efectiva en tus proyectos...",
   },
   {
     id: 3,
-    title: "Building Scalable Backend Systems",
+    title: "Construyendo Sistemas Backend Escalables",
     excerpt:
-      "Best practices for designing and implementing scalable server architectures...",
+      "Mejores prácticas para diseñar e implementar arquitecturas de servidor escalables...",
   },
 ];
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [currentProject, setCurrentProject] = useState(0);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [modoOscuro, setModoOscuro] = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false);
+  const [proyectoActual, setProyectoActual] = useState(0);
+  const [testimonioActual, setTestimonioActual] = useState(0);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
+    document.documentElement.classList.toggle("dark", modoOscuro);
+  }, [modoOscuro]);
 
-  const toggleDarkMode = () => setDarkMode(!darkMode);
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const alternarModoOscuro = () => setModoOscuro(!modoOscuro);
+  const alternarMenu = () => setMenuAbierto(!menuAbierto);
 
-  const nextProject = () =>
-    setCurrentProject((prev) => (prev + 1) % projects.length);
-  const prevProject = () =>
-    setCurrentProject((prev) => (prev - 1 + projects.length) % projects.length);
-  const nextTestimonial = () =>
-    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-  const prevTestimonial = () =>
-    setCurrentTestimonial(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length
+  const siguienteProyecto = () =>
+    setProyectoActual((prev) => (prev + 1) % proyectos.length);
+  const proyectoAnterior = () =>
+    setProyectoActual(
+      (prev) => (prev - 1 + proyectos.length) % proyectos.length
+    );
+  const siguienteTestimonio = () =>
+    setTestimonioActual((prev) => (prev + 1) % testimonios.length);
+  const testimonioAnterior = () =>
+    setTestimonioActual(
+      (prev) => (prev - 1 + testimonios.length) % testimonios.length
     );
 
   return (
@@ -139,10 +145,10 @@ function App() {
               duration={500}
               className="text-2xl font-bold cursor-pointer"
             >
-              <span className="text-blue-600 dark:text-blue-400">Your</span>Name
+              <span className="text-blue-600 dark:text-blue-400">D</span>ev
             </ScrollLink>
             <div className="hidden md:flex space-x-6">
-              {navItems.map((item) => (
+              {elementosNavegacion.map((item) => (
                 <ScrollLink
                   key={item.id}
                   to={item.link}
@@ -156,30 +162,30 @@ function App() {
             </div>
             <div className="flex items-center">
               <button
-                onClick={toggleDarkMode}
+                onClick={alternarModoOscuro}
                 className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 mr-4"
               >
-                {darkMode ? (
+                {modoOscuro ? (
                   <Sun className="w-5 h-5 text-yellow-500" />
                 ) : (
                   <Moon className="w-5 h-5 text-gray-700" />
                 )}
               </button>
-              <button onClick={toggleMenu} className="md:hidden">
+              <button onClick={alternarMenu} className="md:hidden">
                 <Menu className="w-6 h-6" />
               </button>
             </div>
           </div>
-          {menuOpen && (
+          {menuAbierto && (
             <div className="mt-4 md:hidden">
-              {navItems.map((item) => (
+              {elementosNavegacion.map((item) => (
                 <ScrollLink
                   key={item.id}
                   to={item.link}
                   smooth
                   duration={500}
                   className="block py-2 hover:text-blue-500"
-                  onClick={toggleMenu}
+                  onClick={alternarMenu}
                 >
                   {item.name}
                 </ScrollLink>
@@ -190,54 +196,56 @@ function App() {
       </header>
 
       <main className="pt-16">
+        {/* Sección de inicio */}
         <section
-  id="home"
-  className="min-h-screen flex items-center justify-center bg-cover bg-center"
-  style={{
-    backgroundImage: `url('/code1.jpg')`, // Ruta de la imagen en la carpeta public
-  }}
->
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    className="text-center bg-white bg-opacity-80 dark:bg-gray-800 dark:bg-opacity-80 p-8 rounded-lg shadow-lg"
-  >
-    <h1 className="text-5xl md:text-7xl font-bold mb-4">
-      Hi, I'm{" "}
-      <span className="text-blue-600 dark:text-blue-400">Your Name</span>
-    </h1>
-    <h2 className="text-2xl md:text-4xl mb-8">
-      I'm a{" "}
-      <Typewriter
-        words={[
-          "Full-Stack Developer",
-          "UI/UX Designer",
-          "Problem Solver",
-        ]}
-        loop={0}
-        cursor
-        cursorStyle="_"
-        typeSpeed={70}
-        deleteSpeed={50}
-        delaySpeed={1000}
-      />
-    </h2>
-    <ScrollLink
-      to="about"
-      smooth
-      duration={500}
-      className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300 text-lg"
-    >
-      Explore My Work <ChevronRight className="ml-2 w-5 h-5" />
-    </ScrollLink>
-  </motion.div>
-</section>
+          id="home"
+          className="min-h-screen flex items-center justify-center bg-cover bg-center"
+          style={{ backgroundImage: `url('/background.jpg')` }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center bg-white bg-opacity-80 dark:bg-gray-800 dark:bg-opacity-80 p-8 rounded-lg shadow-lg"
+          >
+            <h1 className="text-5xl md:text-7xl font-bold mb-4">
+              Hola, Soy{" "}
+              <span className="text-blue-600 dark:text-blue-400">
+                Erick Segura
+              </span>
+            </h1>
+            <h2 className="text-2xl md:text-4xl mb-8">
+              Soy{" "}
+              <Typewriter
+                words={[
+                  "Full-Stack-Developer",
+                  "Explorador de Nuevas Tecnologías",
+                  "Cristiano Romanos 1:16",
+                  "Solucionador",
+                ]}
+                loop={0}
+                cursor
+                cursorStyle="_"
+                typeSpeed={70}
+                deleteSpeed={50}
+                delaySpeed={1000}
+              />
+            </h2>
+            <ScrollLink
+              to="projects"
+              smooth
+              duration={500}
+              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300 text-lg"
+            >
+              PROYECTOS <ChevronRight className="ml-2 w-5 h-5" />
+            </ScrollLink>
+          </motion.div>
+        </section>
 
-
+        {/* Sección About Me */}
         <section id="about" className="py-20 bg-white dark:bg-gray-800">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-bold mb-8 text-center">About Me</h2>
+            <h2 className="text-4xl font-bold mb-8 text-center">Sobre mí</h2>
             <div className="flex flex-col md:flex-row items-center justify-between">
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
@@ -274,35 +282,37 @@ function App() {
           </div>
         </section>
 
+        {/* Sección Skills */}
         <section id="skills" className="py-20 bg-gray-100 dark:bg-gray-700">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-bold mb-8 text-center">My Skills</h2>
+            <h2 className="text-4xl font-bold mb-8 text-center">Habilidades</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-              {skills.map((skill, index) => (
+              {habilidades.map((habilidad, index) => (
                 <motion.div
-                  key={skill.name}
+                  key={habilidad.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex flex-col items-center"
                 >
-                  {skill.icon}
-                  <h3 className="text-xl font-semibold mt-4">{skill.name}</h3>
+                  {habilidad.icon}
+                  <h3 className="text-xl font-semibold mt-4">
+                    {habilidad.name}
+                  </h3>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
+        {/* Sección Projects */}
         <section id="projects" className="py-20 bg-white dark:bg-gray-800">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-bold mb-8 text-center">
-              Featured Projects
-            </h2>
+            <h2 className="text-4xl font-bold mb-8 text-center">Proyectos</h2>
             <div className="relative">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={currentProject}
+                  key={proyectoActual}
                   initial={{ opacity: 0, x: 100 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -100 }}
@@ -310,16 +320,16 @@ function App() {
                   className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden"
                 >
                   <img
-                    src={`/placeholder.svg?text=Project ${projects[currentProject].id}`}
-                    alt={projects[currentProject].title}
+                    src={`/placeholder.svg?text=Project ${proyectos[proyectoActual].id}`}
+                    alt={proyectos[proyectoActual].title}
                     className="w-full h-64 object-cover"
                   />
                   <div className="p-6">
                     <h3 className="text-2xl font-semibold mb-2">
-                      {projects[currentProject].title}
+                      {proyectos[proyectoActual].title}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      {projects[currentProject].description}
+                      {proyectos[proyectoActual].description}
                     </p>
                     <a
                       href="#"
@@ -331,13 +341,13 @@ function App() {
                 </motion.div>
               </AnimatePresence>
               <button
-                onClick={prevProject}
+                onClick={proyectoAnterior}
                 className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <button
-                onClick={nextProject}
+                onClick={siguienteProyecto}
                 className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md"
               >
                 <ChevronRight className="w-6 h-6" />
@@ -346,18 +356,17 @@ function App() {
           </div>
         </section>
 
+        {/* Sección Testimonials */}
         <section
           id="testimonials"
           className="py-20 bg-gray-100 dark:bg-gray-700"
         >
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-bold mb-8 text-center">
-              What People Say
-            </h2>
+            <h2 className="text-4xl font-bold mb-8 text-center">Testimonios</h2>
             <div className="relative">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={currentTestimonial}
+                  key={testimonioActual}
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -50 }}
@@ -365,35 +374,35 @@ function App() {
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-2xl mx-auto"
                 >
                   <p className="text-xl italic mb-4">
-                    "{testimonials[currentTestimonial].text}"
+                    "{testimonios[testimonioActual].text}"
                   </p>
                   <div className="flex items-center">
                     <img
-                      src={`/placeholder.svg?text=${testimonials[
-                        currentTestimonial
+                      src={`/placeholder.svg?text=${testimonios[
+                        testimonioActual
                       ].name.charAt(0)}`}
-                      alt={testimonials[currentTestimonial].name}
+                      alt={testimonios[testimonioActual].name}
                       className="w-12 h-12 rounded-full mr-4"
                     />
                     <div>
                       <h4 className="font-semibold">
-                        {testimonials[currentTestimonial].name}
+                        {testimonios[testimonioActual].name}
                       </h4>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {testimonials[currentTestimonial].role}
+                        {testimonios[testimonioActual].role}
                       </p>
                     </div>
                   </div>
                 </motion.div>
               </AnimatePresence>
               <button
-                onClick={prevTestimonial}
+                onClick={testimonioAnterior}
                 className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <button
-                onClick={nextTestimonial}
+                onClick={siguienteTestimonio}
                 className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md"
               >
                 <ChevronRight className="w-6 h-6" />
@@ -402,13 +411,14 @@ function App() {
           </div>
         </section>
 
+        {/* Sección Blog */}
         <section id="blog" className="py-20 bg-white dark:bg-gray-800">
           <div className="container mx-auto px-6">
             <h2 className="text-4xl font-bold mb-8 text-center">
-              Latest Blog Posts
+              Publicaciones
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {blogPosts.map((post, index) => (
+              {postsBlog.map((post, index) => (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -439,11 +449,10 @@ function App() {
           </div>
         </section>
 
+        {/* Sección Contact */}
         <section id="contact" className="py-20 bg-gray-100 dark:bg-gray-700">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-bold mb-8 text-center">
-              Get in Touch
-            </h2>
+            <h2 className="text-4xl font-bold mb-8 text-center">Contacto</h2>
             <div className="max-w-lg mx-auto">
               <form className="space-y-4">
                 <div>
@@ -527,7 +536,7 @@ function App() {
       <footer className="bg-gray-800 text-white py-8">
         <div className="container mx-auto px-6 text-center">
           <p>
-            &copy; {new Date().getFullYear()} Your Name. All rights reserved.
+            &copy; {new Date().getFullYear()} Erick Segura. All rights reserved.
           </p>
           <p className="mt-2 text-gray-400">
             Designed and built with ❤️ using React and Tailwind CSS
