@@ -9,12 +9,6 @@ public class CalculoFactorial {
         int numberInt = scanner.nextInt();
         int result = 1;
 
-        /*
-         * for (int i = 1; i <= numberInt; i++) {
-         * result *= i;
-         * }
-         */
-
         int i = 1;
         while (i <= numberInt) {
 
