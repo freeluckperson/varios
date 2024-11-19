@@ -13,7 +13,7 @@ function AboutMe() {
             className="md:w-1/2 mb-8 md:mb-0"
           >
             <img
-              src="/placeholder.svg?height=400&width=400"
+              src="/background.jpg"
               alt="Profile"
               className="rounded-full w-64 h-64 mx-auto md:mx-0 shadow-lg"
             />

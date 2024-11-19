@@ -1,18 +1,30 @@
 import { motion } from "framer-motion";
 import { FaReact, FaNodeJs, FaJs, FaDatabase, FaJava } from "react-icons/fa";
-import { SiNextdotjs, SiAngular, SiSpringboot, SiJest } from "react-icons/si";
+import {
+  SiNextdotjs,
+  SiAngular,
+  SiSpringboot,
+  SiJest,
+  SiTypescript,
+} from "react-icons/si";
 
 const habilidades = [
-  { name: "React", icon: <FaReact className="text-blue-500 text-5xl" /> },
-  { name: "Next.js", icon: <SiNextdotjs className="text-gray-900 text-5xl" /> },
   { name: "AngularJS", icon: <SiAngular className="text-red-500 text-5xl" /> },
-  { name: "Javascript", icon: <FaJs className="text-blue-600 text-5xl" /> },
-  { name: "Java", icon: <FaJava className="text-blue-600 text-5xl" /> },
-  { name: "Express", icon: <FaNodeJs className="text-green-500 text-5xl" /> },
   {
     name: "Spring Boot",
     icon: <SiSpringboot className="text-green-500 text-5xl" />,
   },
+  { name: "React", icon: <FaReact className="text-blue-500 text-5xl" /> },
+  { name: "Next.js", icon: <SiNextdotjs className="text-gray-900 text-5xl" /> },
+  { name: "Javascript", icon: <FaJs className="text-yellow-400 text-5xl" /> },
+  {
+    name: "Typescript",
+    icon: <SiTypescript className="text-blue-600 text-5xl" />,
+  },
+
+  { name: "Java", icon: <FaJava className="text-blue-600 text-5xl" /> },
+  { name: "Express", icon: <FaNodeJs className="text-green-500 text-5xl" /> },
+
   { name: "MongoDB", icon: <FaDatabase className="text-green-700 text-5xl" /> },
   {
     name: "PostgreSQL",

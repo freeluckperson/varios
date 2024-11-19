@@ -53,7 +53,7 @@ function Contact() {
         </div>
         <div className="mt-12 flex justify-center space-x-6">
           <a
-            href="https://github.com"
+            href="https://github.com/freeluckperson"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
@@ -61,7 +61,7 @@ function Contact() {
             <Github className="w-8 h-8" />
           </a>
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/in/erick-daniel-segura-cabello-9b172a129/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
@@ -69,7 +69,7 @@ function Contact() {
             <Linkedin className="w-8 h-8" />
           </a>
           <a
-            href="mailto:your.email@example.com"
+            href="mailto:gestionecesaria@gmail.co"
             className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
           >
             <Mail className="w-8 h-8" />

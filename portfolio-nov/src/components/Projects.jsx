@@ -5,36 +5,19 @@ import { motion } from "framer-motion";
 const proyectos = [
   {
     id: 1,
+    image: "https://i.imgur.com/IgzF6TO.jpeg",
+    repo: "https://github.com/freeluckperson/final-project-client.git",
+    live: "https://final-project-client-lime.vercel.app/",
     title: "Plataforma E-commerce",
-    description:
-      "Una solución completa de comercio electrónico con React y Node.js",
+    description: "Una solución completa de comercio electrónico Next.js",
   },
   {
     id: 2,
-    title: "Chatbot de IA",
-    description:
-      "Un chatbot inteligente impulsado por algoritmos de aprendizaje automático",
-  },
-  {
-    id: 3,
-    title: "App de Fitness Móvil",
-    description:
-      "Una app de React Native para rastrear entrenamientos y nutrición",
-  },
-  {
-    id: 4,
-    title: "Gestor de Tareas",
-    description: "Aplicación para la gestión de tareas con React y Firebase",
-  },
-  {
-    id: 5,
-    title: "Sistema de Inventario",
-    description: "Sistema de control de inventarios para pequeñas empresas",
-  },
-  {
-    id: 6,
-    title: "Blog Personal",
-    description: "Un blog creado con Next.js y Markdown",
+    image: "https://i.imgur.com/Wx9lCQ4.jpeg",
+    repo: "https://github.com/freeluckperson/Proyectos-backend-frontent-fullstack.git",
+    live: "https://proyectos-backend-frontent-fullstack.vercel.app/",
+    title: "Shopping Cart",
+    description: "Carrito de compras usando context y localStorage",
   },
 ];
 
@@ -68,20 +51,30 @@ function Projects() {
               className="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden"
             >
               <img
-                src={`/placeholder.svg?text=Project ${proyecto.id}`}
+                src={proyecto.image}
                 alt={proyecto.title}
                 className="w-full h-32 object-cover"
               />
-              <div className="p-4">
-                <h3 className="text-xl font-semibold mb-2">{proyecto.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  {proyecto.description}
-                </p>
+              <h3 className="text-xl font-semibold mb-2">{proyecto.title}</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {proyecto.description}
+              </p>
+              <div className="flex flex-row justify-evenly">
                 <a
-                  href="#"
+                  href={proyecto.live}
                   className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Ver Proyecto <ArrowRight className="ml-2 w-4 h-4" />
+                </a>
+                <a
+                  href={proyecto.repo}
+                  className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ver Código <ArrowRight className="ml-2 w-4 h-4" />
                 </a>
               </div>
             </motion.div>

@@ -28,8 +28,8 @@ function App() {
         <AboutMe />
         <Skills />
         <Projects />
-        <Testimonials />
-        <Blogs />
+        {/* <Testimonials />
+        <Blogs /> */}
         <Contact />
       </main>
       <Footer />

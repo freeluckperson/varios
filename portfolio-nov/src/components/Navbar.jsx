@@ -7,8 +7,8 @@ const elementosNavegacion = [
   { id: 1, name: "Sobre Mí", link: "about" },
   { id: 2, name: "Habilidades", link: "skills" },
   { id: 3, name: "Proyectos", link: "projects" },
-  { id: 4, name: "Testimonios", link: "testimonials" },
-  { id: 5, name: "Blog", link: "blog" },
+  /* { id: 4, name: "Testimonios", link: "testimonials" },
+  { id: 5, name: "Blog", link: "blog" }, */
   { id: 6, name: "Contacto", link: "contact" },
 ];
 
