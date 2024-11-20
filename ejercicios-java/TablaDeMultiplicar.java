@@ -7,7 +7,7 @@ public class TablaDeMultiplicar {
 
         System.out.println("Intruduce un tabla entero");
         int tabla = scanner.nextInt();
-        int producto = 0;
+        int producto;
 
         int i = 1;
         while (i <= 10) {
