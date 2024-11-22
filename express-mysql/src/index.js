@@ -6,15 +6,17 @@ const morgan = require("morgan");
 const cors = require("cors");
 
 // Configurar la base de datos usando Sequelize y las variables de entorno
-const sequelize = new Sequelize({
-  host: process.env.DB_HOST,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  dialect: "mysql",
-  port: process.env.DB_PORT,
-  logging: false, // Desactivar los logs de SQL
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: "mysql",
+    logging: false,
+  }
+);
 
 // Crear una instancia de Express
 const app = express();
@@ -46,7 +48,7 @@ const Producto = sequelize.define(
   }
 );
 
-// Validación de datos con Zod
+// Esquema Zod para validar los datos
 const productoSchema = z.object({
   nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
   descripcion: z
@@ -55,20 +57,26 @@ const productoSchema = z.object({
   precio: z.number().min(0, "El precio no puede ser negativo"),
 });
 
-// Ruta para crear un producto
-app.post("/productos", async (req, res) => {
+// Middleware de validación Zod
+const validarProducto = (req, res, next) => {
   try {
     // Validar los datos usando Zod
-    const parsedData = productoSchema.parse(req.body);
-
-    // Crear el producto en la base de datos
-    const producto = await Producto.create(parsedData);
-    res.status(201).json(producto);
+    req.body = productoSchema.parse(req.body);
+    next();
   } catch (error) {
     if (error instanceof z.ZodError) {
-      // Manejo de errores de validación con Zod
       return res.status(400).json({ errors: error.errors });
     }
+    next(error); // Para manejar otros errores
+  }
+};
+
+// Ruta para crear un producto
+app.post("/productos", validarProducto, async (req, res) => {
+  try {
+    const producto = await Producto.create(req.body);
+    res.status(201).json(producto);
+  } catch (error) {
     res
       .status(500)
       .json({ message: "Error al crear el producto", error: error.message });
@@ -81,10 +89,12 @@ app.get("/productos", async (req, res) => {
     const productos = await Producto.findAll();
     res.status(200).json(productos);
   } catch (error) {
-    res.status(500).json({
-      message: "Error al obtener los productos",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({
+        message: "Error al obtener los productos",
+        error: error.message,
+      });
   }
 });
 
@@ -104,27 +114,21 @@ app.get("/productos/:id", async (req, res) => {
 });
 
 // Ruta para actualizar un producto
-app.put("/productos/:id", async (req, res) => {
+app.put("/productos/:id", validarProducto, async (req, res) => {
   try {
     const producto = await Producto.findByPk(req.params.id);
     if (!producto) {
       return res.status(404).json({ message: "Producto no encontrado" });
     }
-
-    // Validar los datos usando Zod
-    const parsedData = productoSchema.parse(req.body);
-
-    // Actualizar el producto
-    await producto.update(parsedData);
+    await producto.update(req.body);
     res.status(200).json(producto);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ errors: error.errors });
-    }
-    res.status(500).json({
-      message: "Error al actualizar el producto",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({
+        message: "Error al actualizar el producto",
+        error: error.message,
+      });
   }
 });
 
@@ -135,7 +139,6 @@ app.delete("/productos/:id", async (req, res) => {
     if (!producto) {
       return res.status(404).json({ message: "Producto no encontrado" });
     }
-
     await producto.destroy();
     res.status(204).send(); // Respuesta vacía para indicar éxito
   } catch (error) {
@@ -151,7 +154,6 @@ app.listen(PORT, async () => {
   try {
     await sequelize.authenticate();
     console.log("Conexión a la base de datos establecida exitosamente");
-    // Sincronizar los modelos con la base de datos
     await sequelize.sync();
     console.log(`Servidor escuchando en el puerto ${PORT}`);
   } catch (error) {
