@@ -144,3 +144,8 @@ if (inPosition)
         profitPercent := (stopLossPrice - entryPrice) / entryPrice * 100
         label.new(bar_index, high, "Venta - Stop Loss: " + str.tostring(stopLossPrice, "#.##") + "\nPérdida: " + str.tostring(profitPercent, "#.##") + "%", color=color.red, textcolor=color.white)
         inPosition := false
+
+
+
+///=================================================================================================
+// SEÑALES Bitsgap
