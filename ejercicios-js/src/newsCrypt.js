@@ -187,3 +187,212 @@ plot(inPosition ? stopLossPrice : na, color=color.red, style=plot.style_stepline
 plot(ema1, color=color.yellow, title="EMA 50", linewidth=2)
 plot(ema2, color=color.blue, title="EMA 100", linewidth=2)
 plot(ema3, color=color.red, title="EMA 150", linewidth=2)
+
+
+//======================================================================================
+//@version=5
+strategy("EMA Cross 7-21 con Alineación 1H y 15M, entrada en 5M", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=2)
+
+// Parámetros EMAs
+emaFastLen = 7
+emaSlowLen = 21
+
+// Función para obtener EMA en timeframe dado
+getEMA(tf, length) =>
+    request.security(syminfo.tickerid, tf, ta.ema(close, length))
+
+// Obtener EMAs en 1H y 15M para definir tendencia
+emaFast_1H = getEMA("60", emaFastLen)
+emaSlow_1H = getEMA("60", emaSlowLen)
+emaFast_15M = getEMA("15", emaFastLen)
+emaSlow_15M = getEMA("15", emaSlowLen)
+
+// Definir tendencia en 1H y 15M
+trendUp_1H = emaFast_1H > emaSlow_1H
+trendDown_1H = emaFast_1H < emaSlow_1H
+trendUp_15M = emaFast_15M > emaSlow_15M
+trendDown_15M = emaFast_15M < emaSlow_15M
+
+// Confirmar que tendencia en 1H y 15M coinciden
+trendUp = trendUp_1H and trendUp_15M
+trendDown = trendDown_1H and trendDown_15M
+
+// EMAs en 5M para detectar cruce de entrada
+emaFast_5M = ta.ema(close, emaFastLen)
+emaSlow_5M = ta.ema(close, emaSlowLen)
+
+// Condiciones de entrada en 5M con cruce EMA 7-21 y alineación de tendencia
+longCondition = trendUp and ta.crossover(emaFast_5M, emaSlow_5M)
+shortCondition = trendDown and ta.crossunder(emaFast_5M, emaSlow_5M)
+
+// Parámetros SL y TP fijos (%)
+stopLossPerc = 0.004  // 0.4%
+takeProfitPerc = 0.008  // 0.8%
+
+// Variables para almacenar precio de entrada
+var float entryPriceLong = na
+var float entryPriceShort = na
+
+// Entradas
+if (longCondition)
+    entryPriceLong := close
+    strategy.entry("Long", strategy.long)
+
+if (shortCondition)
+    entryPriceShort := close
+    strategy.entry("Short", strategy.short)
+
+// Salidas con SL y TP fijos
+if (strategy.position_size > 0 and not na(entryPriceLong))
+    stopLossLong = entryPriceLong * (1 - stopLossPerc)
+    takeProfitLong = entryPriceLong * (1 + takeProfitPerc)
+    strategy.exit("Exit Long", "Long", stop=stopLossLong, limit=takeProfitLong)
+
+if (strategy.position_size < 0 and not na(entryPriceShort))
+    stopLossShort = entryPriceShort * (1 + stopLossPerc)
+    takeProfitShort = entryPriceShort * (1 - takeProfitPerc)
+    strategy.exit("Exit Short", "Short", stop=stopLossShort, limit=takeProfitShort)
+
+// Visualización EMAs para análisis
+plot(emaFast_1H, color=color.blue, title="EMA 7 (1H)", linewidth=2)
+plot(emaSlow_1H, color=color.orange, title="EMA 21 (1H)", linewidth=2)
+plot(emaFast_15M, color=color.purple, title="EMA 7 (15M)")
+plot(emaSlow_15M, color=color.maroon, title="EMA 21 (15M)")
+plot(emaFast_5M, color=color.green, title="EMA 7 (5M)")
+plot(emaSlow_5M, color=color.red, title="EMA 21 (5M)")
+
+//======================================================================================
+
+//@version=6
+strategy("MACD + EMA200 MultiTF con Gestión Profesional", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=2, initial_capital=10000)
+
+// Parámetros
+emaLen = 200
+macd_fast = 12
+macd_slow = 26
+macd_signal = 9
+atrLen = 14
+atrMultSL = 0.5
+tp1_mult = 1.0
+tp2_mult = 2.0
+swingLookback = 7
+
+// Funciones auxiliares para detectar posición abierta
+estrategia_posicion_larga() =>
+    strategy.position_size > 0
+
+estrategia_posicion_corta() =>
+    strategy.position_size < 0
+
+// EMA 200 en 1H y 15M para confirmar tendencia
+ema200_1h = request.security(syminfo.tickerid, "60", ta.ema(close, emaLen))
+ema200_15m = request.security(syminfo.tickerid, "15", ta.ema(close, emaLen))
+
+// Tendencia alineada
+tendencia_alcista = (close > ema200_1h) and (close > ema200_15m)
+tendencia_bajista = (close < ema200_1h) and (close < ema200_15m)
+
+// MACD en M5
+[macdLine, signalLine, _] = ta.macd(close, macd_fast, macd_slow, macd_signal)
+
+// ATR para stops
+atr = ta.atr(atrLen)
+
+// Variables para controlar señales y gestión
+var bool inTrade = false
+var float entryPrice = na
+var float stopLoss = na
+var float takeProfit1 = na
+var float takeProfit2 = na
+var string posID = ""
+
+// Función para obtener swing high y low recientes
+swingHigh = ta.highest(high, swingLookback)
+swingLow = ta.lowest(low, swingLookback)
+
+// Condiciones de entrada
+longSignal = tendencia_alcista and ta.crossover(macdLine, signalLine) and not inTrade
+shortSignal = tendencia_bajista and ta.crossunder(macdLine, signalLine) and not inTrade
+
+// Entradas
+if (longSignal)
+    entryPrice := close
+    stopLoss := swingLow - atrMultSL * atr
+    takeProfit1 := entryPrice + tp1_mult * (entryPrice - stopLoss)
+    takeProfit2 := entryPrice + tp2_mult * (entryPrice - stopLoss)
+    posID := "Long"
+    strategy.entry(posID, strategy.long)
+    inTrade := true
+    label.new(bar_index, low, "LONG ENTRY", color=color.green, style=label.style_label_up, textcolor=color.white, size=size.small)
+
+if (shortSignal)
+    entryPrice := close
+    stopLoss := swingHigh + atrMultSL * atr
+    takeProfit1 := entryPrice - tp1_mult * (stopLoss - entryPrice)
+    takeProfit2 := entryPrice - tp2_mult * (stopLoss - entryPrice)
+    posID := "Short"
+    strategy.entry(posID, strategy.short)
+    inTrade := true
+    label.new(bar_index, high, "SHORT ENTRY", color=color.red, style=label.style_label_down, textcolor=color.white, size=size.small)
+
+// Gestión de salidas parciales y totales
+if inTrade
+    // Salida parcial TP1 al alcanzar primer objetivo
+    if strategy.position_size > 0 and close >= takeProfit1
+        strategy.close(posID, qty_percent=25)
+        label.new(bar_index, takeProfit1, "TP1", color=color.lime, style=label.style_label_down, textcolor=color.black, size=size.tiny)
+    if strategy.position_size < 0 and close <= takeProfit1
+        strategy.close(posID, qty_percent=25)
+        label.new(bar_index, takeProfit1, "TP1", color=color.lime, style=label.style_label_up, textcolor=color.black, size=size.tiny)
+
+    // Salida total TP2 al alcanzar segundo objetivo
+    if strategy.position_size > 0 and close >= takeProfit2
+        strategy.close(posID)
+        label.new(bar_index, takeProfit2, "TP2", color=color.green, style=label.style_label_down, textcolor=color.white, size=size.small)
+        inTrade := false
+    if strategy.position_size < 0 and close <= takeProfit2
+        strategy.close(posID)
+        label.new(bar_index, takeProfit2, "TP2", color=color.red, style=label.style_label_up, textcolor=color.white, size=size.small)
+        inTrade := false
+
+    // Stop Loss
+    if strategy.position_size > 0 and close <= stopLoss
+        strategy.close(posID)
+        label.new(bar_index, stopLoss, "SL", color=color.red, style=label.style_label_down, textcolor=color.white, size=size.small)
+        inTrade := false
+    if strategy.position_size < 0 and close >= stopLoss
+        strategy.close(posID)
+        label.new(bar_index, stopLoss, "SL", color=color.red, style=label.style_label_up, textcolor=color.white, size=size.small)
+        inTrade := false
+
+// Salida por cruce inverso MACD o cambio de tendencia
+longExitCond = estrategia_posicion_larga() and (ta.crossunder(macdLine, signalLine) or not tendencia_alcista)
+shortExitCond = estrategia_posicion_corta() and (ta.crossover(macdLine, signalLine) or not tendencia_bajista)
+
+if longExitCond
+    strategy.close("Long")
+    label.new(bar_index, high, "LONG EXIT", color=color.orange, style=label.style_label_down, textcolor=color.white, size=size.tiny)
+    inTrade := false
+
+if shortExitCond
+    strategy.close("Short")
+    label.new(bar_index, low, "SHORT EXIT", color=color.orange, style=label.style_label_up, textcolor=color.white, size=size.tiny)
+    inTrade := false
+
+// Plots para visualización
+plot(ema200_1h, color=color.blue, title="EMA 200 1H")
+plot(ema200_15m, color=color.purple, title="EMA 200 15M")
+plot(macdLine - signalLine, color=(macdLine - signalLine) >= 0 ? color.green : color.red, style=plot.style_histogram, title="MACD Histograma")
+
+// Plotshapes para entradas y salidas (tamaños pequeños)
+plotshape(longSignal, title="Señal Long", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.small)
+plotshape(shortSignal, title="Señal Short", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.small)
+plotshape(longExitCond and strategy.position_size > 0, title="Salida Long", location=location.abovebar, color=color.orange, style=shape.xcross, size=size.tiny)
+plotshape(shortExitCond and strategy.position_size < 0, title="Salida Short", location=location.belowbar, color=color.orange, style=shape.xcross, size=size.tiny)
+
+
+// Alertas para señales
+alertcondition(longSignal, title="Entrada Long", message="Señal de entrada LONG con MACD + EMA200 multiTF")
+alertcondition(shortSignal, title="Entrada Short", message="Señal de entrada SHORT con MACD + EMA200 multiTF")
+alertcondition(longExitCond, title="Salida Long", message="Señal de salida LONG")
+alertcondition(shortExitCond, title="Salida Short", message="Señal de salida SHORT")
