@@ -64,3 +64,80 @@ if barstate.islast
     lbl15M := label.new(bar_index, high * 0.995, "15M EMA200: " + (above15M ? "Arriba" : "Abajo"), xloc.bar_index, yloc.price, color=above15M ? color.green : color.red, style=label.style_label_down, textcolor=color.white, size=size.small)
     lbl1H := label.new(bar_index, high * 0.99, "1H EMA200: " + (above1H ? "Arriba" : "Abajo"), xloc.bar_index, yloc.price, color=above1H ? color.green : color.red, style=label.style_label_down, textcolor=color.white, size=size.small)
 
+
+
+
+    //==============================================================================================================================
+    //@version=5
+indicator(title="Silver Bullet PRO 5M 10-11am (NY)", overlay=true)
+
+// --- Parámetros ---
+lookbackFVG = input.int(defval=5, title="Velas para buscar FVG", minval=1)
+lengthSwing = input.int(defval=5, title="Longitud para Swing High/Low", minval=1)
+
+// --- Filtro de Horario (10:00 a 11:00 AM hora NY) ---
+currentHourNY() => hour(time, "America/New_York")
+inSession = (currentHourNY() >= 10) and (currentHourNY() < 11)
+
+// --- Funciones de Detección de FVG ---
+bullishFVG() => low[lookbackFVG] > high[1]
+bearishFVG() => high[lookbackFVG] < low[1]
+
+// --- Detección de Swing High/Low ---
+swh = ta.pivothigh(high, lengthSwing, lengthSwing)
+swl = ta.pivotlow(low, lengthSwing, lengthSwing)
+
+// --- Detección Básica de BoS (Ejemplo Alcista) ---
+var bool isBullishBoS = false
+if high > swh[1] and not na(swh[1])
+    isBullishBoS := true
+
+var bool isBearishBoS = false
+if low < swl[1] and not na(swl[1])
+    isBearishBoS := true
+
+// --- Detección Básica de Posible CHoCH (Ejemplo Alcista) ---
+var bool isBullishCHoCH = false
+if low < swl[1] and not na(swl[1]) and high > swh[2] and not na(swh[2]) // Ruptura de un LH previo tras formar un LL
+    isBullishCHoCH := true
+
+var bool isBearishCHoCH = false
+if high > swh[1] and not na(swh[1]) and low < swl[2] and not na(swl[2]) // Ruptura de un HL previo tras formar un HH
+    isBearishCHoCH := true
+
+// --- Detección Muy Simplificada de Posible Zona de Demanda (Última vela bajista antes de movimiento alcista) ---
+isPotentialDemand() => close[1] < open[1] and close > open and high - low > ta.atr(14)
+
+// --- Detección Muy Simplificada de Posible Zona de Oferta (Última vela alcista antes de movimiento bajista) ---
+isPotentialSupply() => close[1] > open[1] and close < open and high - low > ta.atr(14)
+
+// --- Lógica de Señal de Compra (CONFLUENCIA - Requiere AJUSTE y REFINAMIENTO significativo) ---
+buyCondition = bullishFVG() and inSession and (isBullishBoS or isBullishCHoCH) and isPotentialDemand()
+
+buySignal = buyCondition
+
+// --- Lógica de Señal de Venta (CONFLUENCIA - Requiere AJUSTE y REFINAMIENTO significativo) ---
+sellCondition = bearishFVG() and inSession and (isBearishBoS or isBearishCHoCH) and isPotentialSupply()
+
+sellSignal = sellCondition
+
+// --- Dibujar Señales ---
+plotshape(buySignal, style=shape.labelup, location=location.belowbar, color=color.green, size=size.small, title="Buy Signal PRO")
+plotshape(sellSignal, style=shape.labeldown, location=location.abovebar, color=color.red, size=size.small, title="Sell Signal PRO")
+
+// --- Dibujar Líneas FVG ---
+if buySignal
+    line.new(bar_index - lookbackFVG, high[1], bar_index, low, color=color.green, width=2, extend=extend.right)
+if sellSignal
+    line.new(bar_index - lookbackFVG, low[1], bar_index, high, color=color.red, width=2, extend=extend.right)
+
+// --- Tabla de Mensajes (PRO) ---
+var table t = table.new(position.top_right, 1, 1)
+
+if buySignal
+    table.cell(t, 0, 0, "Buy Signal PRO Detected", bgcolor=color.new(color.green, 70), text_color=color.white)
+else if sellSignal
+    table.cell(t, 0, 0, "Sell Signal PRO Detected", bgcolor=color.new(color.red, 70), text_color=color.white)
+else
+    table.cell(t, 0, 0, "No Signal PRO", bgcolor=color.new(color.gray, 70), text_color=color.white)
+
